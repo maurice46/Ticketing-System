@@ -29,7 +29,7 @@ def create_app():
                 "message": reason}, 422
     
     @jwt.expired_token_loader
-    def expired_token_callback(jwt_header, jwt_payload):
+    def expired_token_callback():
         return {"error": "token_expired",
                 "message": "Token has expired"}
 
