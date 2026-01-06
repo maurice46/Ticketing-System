@@ -1,10 +1,14 @@
 from models import db, Ticket
 
 # create 
-def create_ticket(data):
+def create_ticket(data, creator_id):
+    if not data or "title" not in data:
+        return {"error": "title required"}, 400
+    
     ticket = Ticket(
         title=data["title"],
-        description=data.get("description")
+        description=data.get("description"),
+        creator_id=creator_id
     )
     db.session.add(ticket)
     db.session.commit()
@@ -20,7 +24,7 @@ def get_ticket_by_id(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     if not ticket:
         return {"error": "not found"}, 404
-    return {"id": ticket.id, "title": ticket.title}
+    return {"id": ticket.id, "title": ticket.title, "description": ticket.description}
 
 # update 
 def update_ticket(ticket_id, data):

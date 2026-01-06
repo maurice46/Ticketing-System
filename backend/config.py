@@ -21,3 +21,8 @@ class Config: # REQUIRES EXACT UPPERCASE NAMES
     SQLALCHEMY_DATABASE_URI = "sqlite:///tickets.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # signs tokens (keep in secret in production)
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "chage-me-in-prod")
+    JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "3600")) # seconds
+
+
