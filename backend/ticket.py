@@ -23,7 +23,6 @@ def create():
 
 
 @ticket_bp.route("/all", methods=["GET"])
-@jwt_required()
 def list_all():
     return list_tickets()
 

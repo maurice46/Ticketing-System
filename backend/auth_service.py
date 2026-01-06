@@ -38,7 +38,7 @@ def login_user(data):
     # identity will be stored in the token as a "sub" claim
     access_token = create_access_token(identity=str(user.id))
 
-    return {"message": "login successfull",
+    return {"message": "login successfully",
             "access_token": access_token,
             "user": {"id": user.id, "email": user.email, "role": user.role}
             }, 200

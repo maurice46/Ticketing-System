@@ -16,6 +16,36 @@ Postman
 
 Ticket Access 
 - Get access token from user login stuff 
-- Authorization Bearer <token>
+- Authorization Bearer <token> 
+
+JWT 
+- JSON Web Token 
+- 
+- Digitally signed proof of identity that the server issues after login and later 
+  trusts without re-checking the database 
+- Key Idea 
+    1) Stateless authentication 
+    2) Server does not store sessions 
+    3) Token proves who you are on every request 
+
+User logs in (POST /api/v1/auth/login) and sends the email and address.
+Then, the server verifies the credentials (finds user in DB, verifies password hash, NO JWT YET)
+Afterwards, the server issues JWT, an identity stored as a sub. The token is signed and normally
+expires after 1 hour. 
+When the client stores a token, the client stores JWT in memory (best) or local storage. Backend 
+does not store anything. 
+
+How JWT is used on EVERY request: 
+1) Request to protected route (GET /api/v1/tickets/3)
+- Headers: Authorization: Bearer <token>
+2) @jwt_required() intercepts request 
+- Before your route runs: extracta Authorization header, parses token, verifies signature, checks expiration 
+3) Identity is loaded 
+- get_jwt_identity() # returns "2"
+- This is the logged-in user 
+- No DB lookup required 
+4) Route logic executes -> the route runs with verified identity 
+
+
 
 
