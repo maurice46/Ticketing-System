@@ -1,5 +1,5 @@
 Initialization
 - python -m venv venv 
 - venv\Scripts\activate
-- pip install flask 
+- pip install flask flask_cors flask_sqlalchemy flask_restful 
 

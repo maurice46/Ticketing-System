@@ -1,0 +1,23 @@
+import os 
+"""
+Centralized App Settings 
+
+Reads the environment variable SECRET_KEY.
+- If it exists, its value is used.
+- If it does not exist, the default string "dev-secret" is used.
+- This is typically used for session signing, cryptographic operations, or app security.
+
+Defines the database connection string for SQLAlchemy.
+- Uses SQLite
+- Stores data in a local file named tickets.db
+- sqlite:/// means a relative path in the current working directory.
+
+Intended to disable SQLAlchemy’s event-based change tracking (used by Flask-SQLAlchemy to reduce overhead).
+However, the attribute name is misspelled (sqlachmey instead of sqlalchemy), so frameworks expecting SQLALCHEMY_TRACK_MODIFICATIONS 
+will ignore this setting
+"""
+class Config:
+    key = os.getenv("SECRET_KEY", "dev-secret")
+    sqlalchemy_database_url = "sqlite:///tickets.db"
+    sqlachmey_track_modification = False
+
