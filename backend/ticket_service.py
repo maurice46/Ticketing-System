@@ -12,7 +12,7 @@ def create_ticket(data, creator_id):
     )
     db.session.add(ticket)
     db.session.commit()
-    return {"id": ticket.id, "title": ticket.title}, 201 # 201 -> created
+    return {"id": ticket.id, "title": ticket.title, "creator id": ticket.creator_id}, 201 # 201 -> created
 
 # read 
 def list_tickets():
