@@ -24,5 +24,5 @@ def list_users():
         return {
             "error" : "No users"
         }
-    return [{"id": user.id, "email": user.email, "password": user.password, "role": user.role} 
+    return [{"id": user.id, "email": user.email, "role": user.role} 
             for user in users]

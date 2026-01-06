@@ -11,6 +11,8 @@ ticket_bp = Blueprint("tickets", __name__)
 
 @ticket_bp.route("/", methods=["POST"])
 def create():
+    if not request.is_json:
+        return {"error": "Request must be JSON"}, 415
     return create_ticket(request.get_json())
 
 @ticket_bp.route("/all", methods=["GET"])
