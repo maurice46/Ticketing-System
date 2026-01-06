@@ -1,4 +1,3 @@
-import os 
 """
 Centralized App Settings 
 
@@ -16,8 +15,9 @@ Intended to disable SQLAlchemy’s event-based change tracking (used by Flask-SQ
 However, the attribute name is misspelled (sqlachmey instead of sqlalchemy), so frameworks expecting SQLALCHEMY_TRACK_MODIFICATIONS 
 will ignore this setting
 """
-class Config:
-    key = os.getenv("SECRET_KEY", "dev-secret")
-    sqlalchemy_database_url = "sqlite:///tickets.db"
-    sqlachmey_track_modification = False
+import os
+class Config: # REQUIRES EXACT UPPERCASE NAMES 
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
+    SQLALCHEMY_DATABASE_URI = "sqlite:///tickets.db"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 

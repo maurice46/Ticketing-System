@@ -1,10 +1,10 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User
+from .models import db, User
 
 def register_user(data):
     user = User(
         email=data["email"],
-        password=generate_password_hash(data["Password"])
+        password=generate_password_hash(data["password"])
     )
     db.session.add(user)
     db.session.commit()

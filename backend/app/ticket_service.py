@@ -1,4 +1,4 @@
-from models import db, Ticket
+from .models import db, Ticket
 
 # create 
 def create_ticket(data):
@@ -38,6 +38,6 @@ def delete_ticket(ticket_id):
         return {"error": "not found"}, 404
     db.session.delete(ticket)
     db.session.commit()
-    return "Ticket successfully deleted", 204
+    return "", 204 # HTTP 204 must not include a body
 
 

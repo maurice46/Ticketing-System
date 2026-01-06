@@ -15,9 +15,3 @@ class Ticket(db.Model):
     status = db.Column(db.String(20), default="open")
     creator_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-class Comment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    ticket_id = db.Column(db.Integer, db.ForeignKey("ticket.id"))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    body = db.Column(db.Text, nullable=False)
-
