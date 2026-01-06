@@ -23,10 +23,21 @@ def get_ticket_by_id(ticket_id):
 
 # update 
 def update_ticket(ticket_id, data):
-    ticket = Ticket()
+    ticket = Ticket.query.get(ticket_id)
+    if not ticket:
+        return {"error": "not found"}, 404
+    ticket.description = data.get("description", ticket.description)
+    ticket.status = data.get("status", ticket.status)
+    db.session.commit()
+    return {"message": "updated"}
 
 # delete
 def delete_ticket(ticket_id):
-    pass
+    ticket = Ticket.query.get(ticket_id)
+    if not ticket:
+        return {"error": "not found"}, 404
+    db.session.delete(ticket)
+    db.session.commit()
+    return "Ticket successfully deleted", 204
 
 
