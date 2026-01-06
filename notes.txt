@@ -3,3 +3,16 @@ Initialization
 - venv\Scripts\activate
 - pip install flask flask_cors flask_sqlalchemy flask_restful 
 
+Postman 
+- Header: Content-Type application/json
+- Body: raw json 
+    {
+        "username" : user1
+        "email" : something@email.com,
+        "password" : password123,
+
+    }
+- http://127.0.0.1:5000/api/v1/tickets/
+
+
+

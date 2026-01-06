@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from .ticket_service import (
+from ticket_service import (
     create_ticket,
     list_tickets,
     get_ticket_by_id,
