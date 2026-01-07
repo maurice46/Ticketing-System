@@ -8,21 +8,28 @@ from ticket_service import (
     delete_ticket
 )
 
+"""
+Defines ticket API routes and enforces JWT authentication
+jwt_required protects sensitive routes 
+get_jwt_identity extracts uer ID 
+"""
+
 ticket_bp = Blueprint("tickets", __name__)
 
 
 @ticket_bp.route("/", methods=["POST"])
-@jwt_required()
+@jwt_required() # require valid JWT in Authorization header
 def create():
     if not request.is_json:
         return {"error": "Request must be JSON"}, 415
     
-    creator_id = int(get_jwt_identity())
+    creator_id = int(get_jwt_identity()) # extract user ID from token
     data = request.get_json()
     return create_ticket(data, creator_id)
 
 
 @ticket_bp.route("/all", methods=["GET"])
+@jwt_required()
 def list_all():
     return list_tickets()
 

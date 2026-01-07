@@ -17,12 +17,16 @@ will ignore this setting
 """
 import os
 class Config: # REQUIRES EXACT UPPERCASE NAMES 
+    # used for session signing and security
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
+    # SQLite database stored locally 
     SQLALCHEMY_DATABASE_URI = "sqlite:///tickets.db"
+    # disables expensive change tracking 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # signs tokens (keep in secret in production)
+    # signs JWT tokens (keep in secret in production)
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "chage-me-in-prod")
+    # token expiration (seconds)
     JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "3600")) # seconds
 
 

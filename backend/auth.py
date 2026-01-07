@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from auth_service import login_user, register_user, list_users
 
 """
+Define authentication 
 Blueprint is used to group related routes
 request to access incoming HTTP request data
 

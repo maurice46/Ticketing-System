@@ -1,5 +1,9 @@
 from models import db, Ticket
 
+"""
+Contains CRUD logic for tickets
+"""
+
 # create 
 def create_ticket(data, creator_id):
     if not data or "title" not in data:

@@ -5,6 +5,11 @@ from auth import auth_bp
 from ticket import ticket_bp
 from flask_jwt_extended import JWTManager
 
+"""
+Application bootstrap:
+- Create flask app, initialize database
+- Set up JWT, register blueprints, run server
+"""
 
 def create_app():
     app = Flask(__name__)
@@ -16,24 +21,24 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    @jwt.unauthorized_loader
+    @jwt.unauthorized_loader # handles missing token 
     def missing_token_callback(reason):
         return {"error": "missing_authorization",
                 "message": reason}, 401
     
-    @jwt.invalid_token_loader
+    @jwt.invalid_token_loader # handles malformed token 
     def invalid_token_callback(reason):
         return {"error": "invalid_token",
                 "message": reason}, 422
     
-    @jwt.expired_token_loader
+    @jwt.expired_token_loader # handles expired token 
     def expired_token_callback():
         return {"error": "token_expired",
                 "message": "Token has expired"}
 
 
-    app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
-    app.register_blueprint(ticket_bp, url_prefix="/api/v1/tickets")
+    app.register_blueprint(auth_bp, url_prefix="/api/v1/auth") # mounts auth routes 
+    app.register_blueprint(ticket_bp, url_prefix="/api/v1/tickets") # mounts ticket routes 
 
     return app
 
