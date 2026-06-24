@@ -8,7 +8,7 @@ built with Flask and secured with JWT authentication.
 ## Features
 
 - User registration and login with hashed passwords
-- JWT-based authentication with token expiry
+- JWT-based authentication with tokens
 - Role-based access control (user / admin)
 - Full ticket CRUD — create, read, update, delete
 - Ownership enforcement — users can only modify their own tickets
