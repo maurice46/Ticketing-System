@@ -20,8 +20,11 @@ def register_user(data):
         email=email,
         password=generate_password_hash(password) # hashes passwords to keep "secure"
     )
+
+    # save user to the database
     db.session.add(user)
     db.session.commit()
+
     return {"message": "user created", "id": user.id, "email": user.email}, 201
 
 def login_user(data):
@@ -32,6 +35,7 @@ def login_user(data):
     password = data["password"]
 
     user = User.query.filter_by(email=email).first()
+
     if not user or not check_password_hash(user.password, password):
         return {"error": "invalid credentials"}, 401
     

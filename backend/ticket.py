@@ -16,7 +16,6 @@ get_jwt_identity extracts user ID
 
 ticket_bp = Blueprint("tickets", __name__)
 
-
 @ticket_bp.route("/", methods=["POST"])
 @jwt_required() # require valid JWT in Authorization header
 def create():

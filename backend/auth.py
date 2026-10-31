@@ -5,7 +5,7 @@ from auth_service import login_user, register_user, list_users
 Blueprint is used to group related routes
 request to access incoming HTTP request data
 
-auth is the blueprint identifier and __name__ helps Flask locate related resources 
+"auth" is the blueprint identifier and __name__ helps Flask locate related resources 
 """
 auth_bp = Blueprint("auth", __name__)
 
