@@ -23,7 +23,7 @@ def create_app():
         return {"error": "missing_authorization",
                 "message": reason}, 401
     
-    @jwt.invalid_token_loader # handles malformed token 
+    @jwt.invalid_token_loader # handles invalid token 
     def invalid_token_callback(reason):
         return {"error": "invalid_token",
                 "message": reason}, 422
