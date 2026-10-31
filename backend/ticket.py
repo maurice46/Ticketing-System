@@ -27,6 +27,7 @@ def create():
     return create_ticket(data, creator_id)
 
 
+
 @ticket_bp.route("/all", methods=["GET"])
 @jwt_required()
 def list_all():
@@ -34,11 +35,13 @@ def list_all():
     return list_tickets(user_id)
 
 
+
 @ticket_bp.route("/<int:ticket_id>", methods=["GET"])
 @jwt_required()
 def get_one(ticket_id):
     user_id = int(get_jwt_identity())
     return get_ticket_by_id(ticket_id, user_id)
+
 
 
 @ticket_bp.route("/<int:ticket_id>", methods=["PATCH"])
@@ -50,6 +53,7 @@ def update(ticket_id):
     user_id = int(get_jwt_identity())
     data = request.get_json(silent=True)
     return update_ticket(ticket_id, data, user_id)
+
 
 
 @ticket_bp.route("/<int:ticket_id>", methods=["DELETE"])

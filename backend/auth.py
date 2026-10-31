@@ -24,6 +24,7 @@ def register():
     return register_user(data)
 
 
+
 # define a POST endpoint under this blueprint at /login
 @auth_bp.route("/login", methods=["POST"])
 def login():
@@ -32,6 +33,8 @@ def login():
     
     data = request.get_json(silent=True)
     return login_user(data)
+
+
 
 # admin-only: list every user (don't want anyone to access users)
 @auth_bp.route("/all", methods=["GET"])

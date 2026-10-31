@@ -24,6 +24,8 @@ def _read_credentials(data):
 
     return email, password, None
 
+
+
 def register_user(data):
     email, password, error = _read_credentials(data)
 
@@ -45,6 +47,8 @@ def register_user(data):
     db.session.commit()
 
     return {"message": "user created", "id": user.id, "email": user.email}, 201
+
+
 
 def login_user(data):
     email, password, error = _read_credentials(data)
