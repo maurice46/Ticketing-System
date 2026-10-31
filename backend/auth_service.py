@@ -69,6 +69,8 @@ def login_user(data):
         "user": {"id": user.id, "email": user.email, "role": user.role}
     }, 200
 
+
+
 def list_users(requesting_user_id):
     requester = db.session.get(User, requesting_user_id)
     if not requester or requester.role != "admin":

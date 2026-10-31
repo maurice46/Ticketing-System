@@ -12,12 +12,14 @@ def _is_admin(user):
     return user is not None and user.role == "admin"
 
 
+
 def is_owner_or_admin(ticket, user_id): # authorization
     user = db.session.get(User, user_id) # dont do "User.query.get(user_id)""
 
     if not user: return False
 
     return ticket.creator_id == user_id or _is_admin(user)
+
 
 
 def _validate_title(title): # return (clean_title, error_message)
@@ -33,6 +35,7 @@ def _validate_title(title): # return (clean_title, error_message)
         return None, f"title must be at most {MAX_TITLE_LEN} characters"
 
     return title, None
+
 
 
 def _validate_description(description):
