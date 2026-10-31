@@ -1,105 +1,59 @@
-# Ticket Management API
+# Ticket Management System
 
-A simple backend for managing support tickets. People can sign up, log in, and create, view, update and delete their own tickets. Admins can see everyone's tickets.
+A backend API I built with Python and Flask for managing support tickets. Users create an account, log in, and keep track of their own tickets. Admins can see everything.
 
-Built with Python and Flask.
+## What it does
 
-## Getting started
+- **Accounts:** people can sign up and log in
+- **Tickets:** logged-in users can create, view, edit and delete tickets
+- **Statuses:** every ticket is `open`, `in_progress` or `closed`
+- **Privacy:** you can only see and change your own tickets
+- **Admins:** admins can see every ticket and the full user list
 
-**1. Set up your environment** (one time only)
+## What I built into it
+
+**Secure logins**
+- Passwords are scrambled (hashed) before being saved, so the real password is never stored
+- Logging in gives you a token that proves who you are, and it expires after an hour
+- The secret keys that protect those tokens come from outside the code, and the app won't start without them
+
+**Careful about bad input**
+- Checks that emails look real and passwords are at least 8 characters
+- Rejects empty or oversized ticket titles and made-up statuses
+- Returns clear error messages instead of crashing
+
+**Clean organization**
+- Each part of the project has one job, which makes it easy to find things and change them
+
+**Tested**
+- 29 automated tests check that everything works, including that people can't open each other's tickets
+
+## How it's organized
+
+| File | What it does |
+|---|---|
+| `main.py` | starts the app and connects everything |
+| `config.py` | settings and secret keys |
+| `models.py` | the database tables (users and tickets) |
+| `auth.py` | the sign up and log in addresses |
+| `auth_service.py` | the rules behind sign up and log in |
+| `ticket.py` | the ticket addresses |
+| `ticket_service.py` | the rules behind tickets |
+| `test_api.py` | the automated tests |
+
+## Trying it yourself
 
 ```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-```
-
-On Mac or Linux, activate with `source .venv/bin/activate` instead.
-
-**2. Start the server**
-
-```powershell
 $env:FLASK_DEBUG = "1"
 python main.py
 ```
 
-That's it. The API is now running at `http://127.0.0.1:5000`.
+The app now runs at `http://127.0.0.1:5000`. To run the tests, use `pytest -v`.
 
-> `FLASK_DEBUG = "1"` turns on development mode, which is the easiest way to run the project on your own computer. See "Going live" at the bottom if you want to run it for real.
+## What's next
 
-## Try it out
-
-Open a second terminal and run these in order. (In PowerShell, use `curl.exe`, not `curl`.)
-
-**Create an account**
-
-```
-curl.exe -X POST http://127.0.0.1:5000/api/v1/auth/register -H "Content-Type: application/json" -d "{\"email\":\"me@example.com\",\"password\":\"secret123\"}"
-```
-
-**Log in** (you'll get back an `access_token`, so copy it)
-
-```
-curl.exe -X POST http://127.0.0.1:5000/api/v1/auth/login -H "Content-Type: application/json" -d "{\"email\":\"me@example.com\",\"password\":\"secret123\"}"
-```
-
-**Create a ticket** (paste your token where it says `<token>`)
-
-```
-curl.exe -X POST http://127.0.0.1:5000/api/v1/tickets/ -H "Content-Type: application/json" -H "Authorization: Bearer <token>" -d "{\"title\":\"Printer broken\",\"description\":\"Third floor\"}"
-```
-
-**See your tickets**
-
-```
-curl.exe http://127.0.0.1:5000/api/v1/tickets/all -H "Authorization: Bearer <token>"
-```
-
-## What you can do
-
-Every address below starts with `/api/v1`.
-
-| Action | Method and address | Who can do it |
-|---|---|---|
-| Sign up | `POST /auth/register` | anyone |
-| Log in | `POST /auth/login` | anyone |
-| See all users | `GET /auth/all` | admins only |
-| Create a ticket | `POST /tickets/` | logged-in users |
-| See your tickets | `GET /tickets/all` | logged-in users (admins see everyone's) |
-| See one ticket | `GET /tickets/<id>` | the ticket's owner or an admin |
-| Edit a ticket | `PATCH /tickets/<id>` | the ticket's owner or an admin |
-| Delete a ticket | `DELETE /tickets/<id>` | the ticket's owner or an admin |
-
-A ticket's status can be `open`, `in_progress` or `closed`.
-
-## Running the tests
-
-```
-pytest -v
-```
-
-The tests use a temporary database, so they never touch your real data.
-
-## Good to know
-
-- Passwords must be at least 8 characters.
-- Your data is saved in a file called `tickets.db` in the project folder. Delete it to start fresh.
-- There's no button for making someone an admin yet. For now, change that user's `role` to `admin` directly in the database.
-
-## Going live
-
-When you're not in development mode, the app needs two private keys so logins stay secure. Create two with this command (run it twice):
-
-```
-python -c "import secrets; print(secrets.token_hex(32))"
-```
-
-Then set them before starting the server:
-
-```powershell
-$env:SECRET_KEY = "<first key>"
-$env:JWT_SECRET_KEY = "<second key>"
-python main.py
-```
-
-Keep these keys private and never share them or commit them to GitHub.
+- Show when each ticket was created and last changed
+- Split long ticket lists into pages
+- Filter tickets by status
+- A simple way to make someone an admin
