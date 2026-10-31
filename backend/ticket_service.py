@@ -41,6 +41,7 @@ def _validate_description(description):
     return None
 
 
+
 def create_ticket(data, creator_id): # create a ticket 
     if not isinstance(data, dict) or "title" not in data:
         return {"error": "title required"}, 400
@@ -64,6 +65,7 @@ def create_ticket(data, creator_id): # create a ticket
     return {"id": ticket.id, "title": ticket.title, "creator id": ticket.creator_id}, 201 # 201 = created
 
 
+
 def list_tickets(user_id): # read tickets 
     user = db.session.get(User, user_id)
 
@@ -75,6 +77,7 @@ def list_tickets(user_id): # read tickets
     return [{"id": t.id, "title": t.title, "status": t.status, 
              "description" : t.description, "creator_id": t.creator_id} 
             for t in tickets], 200
+
 
 
 def get_ticket_by_id(ticket_id, user_id): # read a certain ticket 
@@ -91,6 +94,7 @@ def get_ticket_by_id(ticket_id, user_id): # read a certain ticket
             "description": ticket.description,
             "status": ticket.status, 
             "creator_id": ticket.creator_id}
+
 
 
 def update_ticket(ticket_id, data, user_id): # update a certain ticket 
@@ -125,6 +129,8 @@ def update_ticket(ticket_id, data, user_id): # update a certain ticket
 
     db.session.commit()
     return {"message": "updated"}
+
+
 
 def delete_ticket(ticket_id, user_id): # delete a certain ticket 
     ticket = db.session.get(Ticket, ticket_id)
