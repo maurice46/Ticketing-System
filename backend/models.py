@@ -6,7 +6,7 @@ db = SQLAlchemy() # global database object
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.String(260), nullable=False)
     role = db.Column(db.String(20), default="user")
 
 class Ticket(db.Model):

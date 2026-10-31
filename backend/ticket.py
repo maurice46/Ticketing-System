@@ -23,14 +23,15 @@ def create():
         return {"error": "Request must be JSON"}, 415
     
     creator_id = int(get_jwt_identity()) # extract user ID from token
-    data = request.get_json()
+    data = request.get_json(silent=True)
     return create_ticket(data, creator_id)
 
 
 @ticket_bp.route("/all", methods=["GET"])
 @jwt_required()
 def list_all():
-    return list_tickets()
+    user_id = int(get_jwt_identity())
+    return list_tickets(user_id)
 
 
 @ticket_bp.route("/<int:ticket_id>", methods=["GET"])
@@ -43,8 +44,11 @@ def get_one(ticket_id):
 @ticket_bp.route("/<int:ticket_id>", methods=["PATCH"])
 @jwt_required()
 def update(ticket_id):
+    if not request.is_json:
+        return {"error": "Request must be JSON"}, 415
+    
     user_id = int(get_jwt_identity())
-    data = request.get_json()
+    data = request.get_json(silent=True)
     return update_ticket(ticket_id, data, user_id)
 
 
