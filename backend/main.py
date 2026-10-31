@@ -5,11 +5,7 @@ from auth import auth_bp
 from ticket import ticket_bp
 from flask_jwt_extended import JWTManager
 
-"""
-Application bootstrap:
-- Create flask app, initialize database
-- Set up JWT, register blueprints, run server
-"""
+"""Create flask app, initialize database: Set up JWT, register blueprints, run server"""
 
 def create_app():
     app = Flask(__name__)
