@@ -20,7 +20,6 @@ Ticket Access
 
 JWT 
 - JSON Web Token 
-- 
 - Digitally signed proof of identity that the server issues after login and later 
   trusts without re-checking the database 
 - Key Idea 

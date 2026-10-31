@@ -32,9 +32,9 @@ def create_app():
                 "message": reason}, 422
     
     @jwt.expired_token_loader # handles expired token 
-    def expired_token_callback():
+    def expired_token_callback(jwt_header, jwt_data):
         return {"error": "token_expired",
-                "message": "Token has expired"}
+                "message": "Token has expired"}, 401
 
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth") # mounts auth routes 
@@ -47,3 +47,4 @@ if __name__ == "__main__":
     app = create_app()
     app.run(debug=True)
 
+  

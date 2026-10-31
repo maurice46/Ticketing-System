@@ -7,8 +7,7 @@ Ticket ownership checks: ticket creator or admin user
 
 def is_owner_or_admin(ticket, user_id): # authorization
     user = User.query.get(user_id)
-    if not user:
-        return False
+    if not user: return False
     return ticket.creator_id == user_id or user.role == "admin"
 
 # create 

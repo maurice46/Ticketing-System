@@ -11,7 +11,7 @@ from ticket_service import (
 """
 Defines ticket API routes and enforces JWT authentication
 jwt_required protects sensitive routes 
-get_jwt_identity extracts uer ID 
+get_jwt_identity extracts user ID 
 """
 
 ticket_bp = Blueprint("tickets", __name__)
