@@ -5,8 +5,7 @@ Reads the environment variable SECRET_KEY:
 
 Defines the database connection string for SQLAlchemy:
 - Uses SQLite
-- Stores data in a local file named tickets.db
-- sqlite:/// -> relative path in the current working directory.
+- Stores data in a local file named tickets.db (sqlite:/// -> relative path in the current working directory)
 """
 import os
 
