@@ -24,7 +24,7 @@ def create_app():
                 "message": reason}, 401
 
 
-    @jwt.invalid_token_loader # handles invalid token 
+    @jwt.invalid_token_loader # handles malformed token 
     def invalid_token_callback(reason):
         return {"error": "invalid_token",
                 "message": reason}, 422
@@ -37,15 +37,15 @@ def create_app():
 
 
     # register blueprints 
-    app.register_blueprint(auth_bp, url_prefix="/api/v1/auth") # mounts auth routes 
+    app.register_blueprint(auth_bp, url_prefix="/api/v1/auth") # mounts authorization routes 
     app.register_blueprint(ticket_bp, url_prefix="/api/v1/tickets") # mounts ticket routes 
 
     return app
 
 
 if __name__ == "__main__":
-    # run server
+    # run server (debug mode only when FLASK_DEBUG=1)
     app = create_app()
-    app.run(debug=True)
+    app.run(debug=Config.DEBUG)
 
   

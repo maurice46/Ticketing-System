@@ -1,192 +1,97 @@
-# Ticketing Management System
+# Ticket Management API
 
-A RESTful API backend for creating, managing, and tracking support tickets,
-built with Flask and secured with JWT authentication.
+A Flask REST API with JWT authentication for creating and managing support tickets.
 
----
+## Setup
 
-## Features
-
-- User registration and login with hashed passwords
-- JWT-based authentication with tokens
-- Role-based access control (user / admin)
-- Full ticket CRUD — create, read, update, delete
-- Ownership enforcement — users can only modify their own tickets
-- Versioned API endpoints (`/api/v1/`)
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Framework | Flask |
-| Database | SQLite via SQLAlchemy |
-| Authentication | flask-jwt-extended |
-| Password hashing | Werkzeug |
-| Testing | Postman |
-
----
-
-## Project Structure
----
-
-## API Endpoints
-
-### Authentication
-
-| Method | Endpoint | Description | Auth required |
-|--------|---------|-------------|---------------|
-| POST | `/api/v1/auth/register` | Register a new user | No |
-| POST | `/api/v1/auth/login` | Login and receive JWT token | No |
-| GET | `/api/v1/auth/all` | List all users | No |
-
-### Tickets
-
-| Method | Endpoint | Description | Auth required |
-|--------|---------|-------------|---------------|
-| POST | `/api/v1/tickets/` | Create a ticket | Yes |
-| GET | `/api/v1/tickets/all` | List all tickets | Yes |
-| GET | `/api/v1/tickets/<id>` | Get a specific ticket | Yes |
-| PATCH | `/api/v1/tickets/<id>` | Update a ticket | Yes |
-| DELETE | `/api/v1/tickets/<id>` | Delete a ticket | Yes |
-
----
-
-## Request & Response Examples
-
-### Register
-```json
-POST /api/v1/auth/register
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "securepassword"
-}
-
-Response 201:
-{
-  "message": "user created",
-  "id": 1,
-  "email": "user@example.com"
-}
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-### Login
-```json
-POST /api/v1/auth/login
-Content-Type: application/json
+(Mac/Linux: `source .venv/bin/activate`)
 
-{
-  "email": "user@example.com",
-  "password": "securepassword"
-}
+## Configuration
 
-Response 200:
-{
-  "message": "login successfully",
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "id": 1,
-    "email": "user@example.com",
-    "role": "user"
-  }
-}
+Secrets are read from environment variables. The app will not start without them.
+
+| Variable | Required | Notes |
+|---|---|---|
+| `SECRET_KEY` | yes* | at least 32 characters |
+| `JWT_SECRET_KEY` | yes* | at least 32 characters |
+| `DATABASE_URL` | no | defaults to `sqlite:///tickets.db` |
+| `JWT_ACCESS_TOKEN_EXPIRES` | no | seconds, default `3600` |
+| `FLASK_DEBUG` | no | `1` = debug mode and insecure built-in dev keys |
+
+\* not needed when `FLASK_DEBUG=1`.
+
+Generate a secret:
+
+```
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-### Create a Ticket
-```json
-POST /api/v1/tickets/
-Authorization: Bearer <token>
-Content-Type: application/json
+## Run
 
-{
-  "title": "Login page is broken",
-  "description": "Users cannot log in on mobile devices."
-}
+Local development (PowerShell):
 
-Response 201:
-{
-  "id": 1,
-  "title": "Login page is broken",
-  "creator id": 1
-}
+```powershell
+$env:FLASK_DEBUG = "1"
+python main.py
 ```
 
-### Update a Ticket
-```json
-PATCH /api/v1/tickets/1
-Authorization: Bearer <token>
-Content-Type: application/json
+Production-style (PowerShell):
 
-{
-  "status": "resolved"
-}
-
-Response 200:
-{
-  "message": "updated"
-}
+```powershell
+$env:SECRET_KEY = "<generated value>"
+$env:JWT_SECRET_KEY = "<another generated value>"
+python main.py
 ```
 
----
+Mac/Linux: `FLASK_DEBUG=1 python main.py`
 
-## How to Run
+The server listens on `http://127.0.0.1:5000`.
 
-**1. Clone the repository**
-```bash
-git clone https://github.com/maurice46/ticketing-system
-cd ticketing-system
+## Test
+
+```
+pytest -v
 ```
 
-**2. Create a virtual environment**
-```bash
-python -m venv venv
-source venv/bin/activate        # Mac/Linux
-venv\Scripts\activate           # Windows
+Tests use a temporary database and their own test secrets (see `conftest.py`).
+
+## Endpoints
+
+All paths are under `/api/v1`.
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/auth/register` | none | create account (password 8+ chars) |
+| POST | `/auth/login` | none | returns `access_token` |
+| GET | `/auth/all` | admin | list users |
+| POST | `/tickets/` | user | create ticket |
+| GET | `/tickets/all` | user | your tickets (admins see all) |
+| GET | `/tickets/<id>` | owner/admin | get one ticket |
+| PATCH | `/tickets/<id>` | owner/admin | update title, description, status |
+| DELETE | `/tickets/<id>` | owner/admin | delete ticket |
+
+Valid statuses: `open`, `in_progress`, `closed`.
+
+## Example requests
+
+In PowerShell use `curl.exe` (plain `curl` is an alias for something else).
+
+```
+curl.exe -X POST http://127.0.0.1:5000/api/v1/auth/register -H "Content-Type: application/json" -d "{\"email\":\"me@example.com\",\"password\":\"secret123\"}"
+
+curl.exe -X POST http://127.0.0.1:5000/api/v1/auth/login -H "Content-Type: application/json" -d "{\"email\":\"me@example.com\",\"password\":\"secret123\"}"
+
+curl.exe -X POST http://127.0.0.1:5000/api/v1/tickets/ -H "Content-Type: application/json" -H "Authorization: Bearer <access_token>" -d "{\"title\":\"Printer broken\",\"description\":\"Third floor\"}"
+
+curl.exe http://127.0.0.1:5000/api/v1/tickets/all -H "Authorization: Bearer <access_token>"
 ```
 
-**3. Install dependencies**
-```bash
-pip install flask flask-sqlalchemy flask-jwt-extended werkzeug
-```
+## Making an admin
 
-**4. Set environment variables (optional)**
-```bash
-export SECRET_KEY=your-secret-key
-export JWT_SECRET_KEY=your-jwt-secret
-export JWT_ACCESS_TOKEN_EXPIRES=3600
-```
-
-**5. Run the server**
-```bash
-python app.py
-```
-
-The server runs at `http://127.0.0.1:5000` by default.
-
----
-
-## Authorization Rules
-
-- Any authenticated user can create tickets and view all tickets
-- Only the ticket creator or an admin can view, update, or delete a specific ticket
-- Roles are assigned at the database level (`user` by default, `admin` manually)
-
----
-
-## Known Limitations
-
-- SQLite is used for simplicity — swap `SQLALCHEMY_DATABASE_URI` in `config.py`
-  for PostgreSQL or MySQL in a production environment
-- The `/api/v1/auth/all` endpoint is unprotected and should be admin-gated
-  before any production deployment
-- JWT secrets fall back to default values if environment variables are not set —
-  always set these explicitly in production
-
----
-
-## Author
-
-Maurice Murillo · [github.com/maurice46](https://github.com/maurice46)
+There is no endpoint for this yet. Set a user's `role` to `admin` directly in the database.
