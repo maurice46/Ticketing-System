@@ -2,16 +2,10 @@ from models import db, Ticket, User
 
 """
 Contains CRUD logic for tickets
-
-Authorization - control what users are allowed to do.
-Any logged in user can change any ticket, not acceptable in production.
-
-Ticket ownership checks:
-- ticket creator or
-- admin user 
-
+Ticket ownership checks: ticket creator or admin user 
 """
-def is_owner_or_admin(ticket, user_id): # Authorization
+
+def is_owner_or_admin(ticket, user_id): # authorization
     user = User.query.get(user_id)
     if not user:
         return False
@@ -29,7 +23,7 @@ def create_ticket(data, creator_id):
     )
     db.session.add(ticket)
     db.session.commit()
-    return {"id": ticket.id, "title": ticket.title, "creator id": ticket.creator_id}, 201 # 201 -> created
+    return {"id": ticket.id, "title": ticket.title, "creator id": ticket.creator_id}, 201 # 201 = created
 
 # read 
 def list_tickets():
@@ -80,7 +74,7 @@ def delete_ticket(ticket_id, user_id):
 
     db.session.delete(ticket)
     db.session.commit()
-    return "", 204 # HTTP 204 must not include a body
+    return "", 204 
 
 
 
