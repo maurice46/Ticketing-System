@@ -38,7 +38,7 @@ def login():
 
 # admin-only: list every user (don't want anyone to access users)
 @auth_bp.route("/all", methods=["GET"])
-@jwt_required 
+@jwt_required()
 def users():
     user_id = int(get_jwt_identity())
     return list_users(user_id)
