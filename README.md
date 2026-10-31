@@ -1,8 +1,12 @@
 # Ticket Management API
 
-A Flask REST API with JWT authentication for creating and managing support tickets.
+A simple backend for managing support tickets. People can sign up, log in, and create, view, update and delete their own tickets. Admins can see everyone's tickets.
 
-## Setup
+Built with Python and Flask.
+
+## Getting started
+
+**1. Set up your environment** (one time only)
 
 ```powershell
 python -m venv .venv
@@ -10,88 +14,92 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-(Mac/Linux: `source .venv/bin/activate`)
+On Mac or Linux, activate with `source .venv/bin/activate` instead.
 
-## Configuration
-
-Secrets are read from environment variables. The app will not start without them.
-
-| Variable | Required | Notes |
-|---|---|---|
-| `SECRET_KEY` | yes* | at least 32 characters |
-| `JWT_SECRET_KEY` | yes* | at least 32 characters |
-| `DATABASE_URL` | no | defaults to `sqlite:///tickets.db` |
-| `JWT_ACCESS_TOKEN_EXPIRES` | no | seconds, default `3600` |
-| `FLASK_DEBUG` | no | `1` = debug mode and insecure built-in dev keys |
-
-\* not needed when `FLASK_DEBUG=1`.
-
-Generate a secret:
-
-```
-python -c "import secrets; print(secrets.token_hex(32))"
-```
-
-## Run
-
-Local development (PowerShell):
+**2. Start the server**
 
 ```powershell
 $env:FLASK_DEBUG = "1"
 python main.py
 ```
 
-Production-style (PowerShell):
+That's it. The API is now running at `http://127.0.0.1:5000`.
 
-```powershell
-$env:SECRET_KEY = "<generated value>"
-$env:JWT_SECRET_KEY = "<another generated value>"
-python main.py
+> `FLASK_DEBUG = "1"` turns on development mode, which is the easiest way to run the project on your own computer. See "Going live" at the bottom if you want to run it for real.
+
+## Try it out
+
+Open a second terminal and run these in order. (In PowerShell, use `curl.exe`, not `curl`.)
+
+**Create an account**
+
+```
+curl.exe -X POST http://127.0.0.1:5000/api/v1/auth/register -H "Content-Type: application/json" -d "{\"email\":\"me@example.com\",\"password\":\"secret123\"}"
 ```
 
-Mac/Linux: `FLASK_DEBUG=1 python main.py`
+**Log in** (you'll get back an `access_token`, so copy it)
 
-The server listens on `http://127.0.0.1:5000`.
+```
+curl.exe -X POST http://127.0.0.1:5000/api/v1/auth/login -H "Content-Type: application/json" -d "{\"email\":\"me@example.com\",\"password\":\"secret123\"}"
+```
 
-## Test
+**Create a ticket** (paste your token where it says `<token>`)
+
+```
+curl.exe -X POST http://127.0.0.1:5000/api/v1/tickets/ -H "Content-Type: application/json" -H "Authorization: Bearer <token>" -d "{\"title\":\"Printer broken\",\"description\":\"Third floor\"}"
+```
+
+**See your tickets**
+
+```
+curl.exe http://127.0.0.1:5000/api/v1/tickets/all -H "Authorization: Bearer <token>"
+```
+
+## What you can do
+
+Every address below starts with `/api/v1`.
+
+| Action | Method and address | Who can do it |
+|---|---|---|
+| Sign up | `POST /auth/register` | anyone |
+| Log in | `POST /auth/login` | anyone |
+| See all users | `GET /auth/all` | admins only |
+| Create a ticket | `POST /tickets/` | logged-in users |
+| See your tickets | `GET /tickets/all` | logged-in users (admins see everyone's) |
+| See one ticket | `GET /tickets/<id>` | the ticket's owner or an admin |
+| Edit a ticket | `PATCH /tickets/<id>` | the ticket's owner or an admin |
+| Delete a ticket | `DELETE /tickets/<id>` | the ticket's owner or an admin |
+
+A ticket's status can be `open`, `in_progress` or `closed`.
+
+## Running the tests
 
 ```
 pytest -v
 ```
 
-Tests use a temporary database and their own test secrets (see `conftest.py`).
+The tests use a temporary database, so they never touch your real data.
 
-## Endpoints
+## Good to know
 
-All paths are under `/api/v1`.
+- Passwords must be at least 8 characters.
+- Your data is saved in a file called `tickets.db` in the project folder. Delete it to start fresh.
+- There's no button for making someone an admin yet. For now, change that user's `role` to `admin` directly in the database.
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| POST | `/auth/register` | none | create account (password 8+ chars) |
-| POST | `/auth/login` | none | returns `access_token` |
-| GET | `/auth/all` | admin | list users |
-| POST | `/tickets/` | user | create ticket |
-| GET | `/tickets/all` | user | your tickets (admins see all) |
-| GET | `/tickets/<id>` | owner/admin | get one ticket |
-| PATCH | `/tickets/<id>` | owner/admin | update title, description, status |
-| DELETE | `/tickets/<id>` | owner/admin | delete ticket |
+## Going live
 
-Valid statuses: `open`, `in_progress`, `closed`.
-
-## Example requests
-
-In PowerShell use `curl.exe` (plain `curl` is an alias for something else).
+When you're not in development mode, the app needs two private keys so logins stay secure. Create two with this command (run it twice):
 
 ```
-curl.exe -X POST http://127.0.0.1:5000/api/v1/auth/register -H "Content-Type: application/json" -d "{\"email\":\"me@example.com\",\"password\":\"secret123\"}"
-
-curl.exe -X POST http://127.0.0.1:5000/api/v1/auth/login -H "Content-Type: application/json" -d "{\"email\":\"me@example.com\",\"password\":\"secret123\"}"
-
-curl.exe -X POST http://127.0.0.1:5000/api/v1/tickets/ -H "Content-Type: application/json" -H "Authorization: Bearer <access_token>" -d "{\"title\":\"Printer broken\",\"description\":\"Third floor\"}"
-
-curl.exe http://127.0.0.1:5000/api/v1/tickets/all -H "Authorization: Bearer <access_token>"
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-## Making an admin
+Then set them before starting the server:
 
-There is no endpoint for this yet. Set a user's `role` to `admin` directly in the database.
+```powershell
+$env:SECRET_KEY = "<first key>"
+$env:JWT_SECRET_KEY = "<second key>"
+python main.py
+```
+
+Keep these keys private and never share them or commit them to GitHub.

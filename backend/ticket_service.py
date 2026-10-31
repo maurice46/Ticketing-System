@@ -6,9 +6,10 @@ Ticket ownership checks: ticket creator or admin user
 """
 
 VALID_STATUSES = {"open", "in_progress", "closed"}
-MAX_TITLE_LEN = 120
+MAX_TITLE_LEN = 120 # matches the String(120) column in models.py
 
 def _is_admin(user):
+    # user can be None if the account was deleted, so check that first
     return user is not None and user.role == "admin"
 
 
@@ -18,6 +19,7 @@ def is_owner_or_admin(ticket, user_id): # authorization
 
     if not user: return False
 
+    # allowed if user created ticket or is an admin
     return ticket.creator_id == user_id or _is_admin(user)
 
 
@@ -26,7 +28,7 @@ def _validate_title(title): # return (clean_title, error_message)
     if not isinstance(title, str):
         return None, "title must be a string"
     
-    title = title.strip()
+    title = title.strip() # remove spaces at both ends
 
     if not title:
         return None, "title required"
@@ -38,7 +40,7 @@ def _validate_title(title): # return (clean_title, error_message)
 
 
 
-def _validate_description(description):
+def _validate_description(description): # optional
     if description is not None and not isinstance(description, str):
         return "description must be a string"
     return None
@@ -59,7 +61,8 @@ def create_ticket(data, creator_id): # create a ticket
 
     if error:
         return {"error": error}, 400
-    
+
+    # status default is "open"
     ticket = Ticket(title=title, description=description, creator_id=creator_id)
 
     db.session.add(ticket)

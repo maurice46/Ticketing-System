@@ -16,10 +16,11 @@ import os
 
 MIN_SECRET_LEN = 32 # recommended keys of at least 32 bytes 
 
+# True only if FLASK_DEBUG is "1", "true", or "yes" anything else False 
 _DEBUG = os.getenv("FLASK_DEBUG", "0").strip().lower() in ("1", "true", "yes")
 
 def _secret(name): # read a secret from the environment or fail
-    value = os.getenv(name)
+    value = os.getenv(name) # none if variable isn't set 
 
     if value:
         if len(value) < MIN_SECRET_LEN:
@@ -29,23 +30,26 @@ def _secret(name): # read a secret from the environment or fail
             )
         return value
 
+    # not set, but debug mode: use a throwaway key so local dev just works 
     if _DEBUG: # insecure on purpose: only reachable when FLASK_DEBUG=1
         return f"dev-only-insecure-{name.lower()}-do-not-user-in-production"
 
+    # not set and not debug: crash at startup instead of running with a weak key
     raise RuntimeError(
         f"{name} is not set. Set it as an environment variable"
         f"(or set FLASK_DEBUG=1 for local development). Generate one with: "
         f'python -c "import secrets; print(secrets.token_hex(32))"'
     )
 
-class Config:
+class Config: # Flask copies every UPPERCASE attribute here into app.config (main.py)
+
     # runs the dev server in debug mode only when explicitly requested 
     DEBUG = _DEBUG
 
     # used for session signing and security 
     SECRET_KEY = _secret("SECRET_KEY")
 
-    # signs JWT tokens
+    # signs JWT tokens (anyone with thios key could forge logins, keep private)
     JWT_SECRET_KEY = _secret("JWT_SECRET_KEY")
     
     # SQLite by default: set DATABASE_URL to use another database 
@@ -54,6 +58,6 @@ class Config:
     # disables expensive change tracking 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # token expiration (in seconds)
+    # token expiration (in seconds); 3600 = 1 hour
     JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "3600")) 
 

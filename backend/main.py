@@ -1,22 +1,26 @@
-from flask import Flask
-from config import Config
-from models import db
-from auth import auth_bp
-from ticket import ticket_bp
-from flask_jwt_extended import JWTManager
+from flask import Flask                        # web framework
+from config import Config                      # settings (secrets, database, token lifetime)
+from models import db                          # shared database object 
+from auth import auth_bp                       # blueprint for /register, /login, /all
+from ticket import ticket_bp                   # blueprint for ticket routes 
+from flask_jwt_extended import JWTManager      # adds JWT login support to Flask
 
-def create_app():
+def create_app(): # "application factory": builds and returns a fresh app each call 
+
     # create flask app 
     app = Flask(__name__)
     app.config.from_object(Config)
 
     # initialize database 
-    db.init_app(app)
+    db.init_app(app) # connects database object to this app
     with app.app_context():
-        db.create_all()
+        db.create_all() # create any missing tables
 
     # set up JWT
     jwt = JWTManager(app)
+
+    # three handlers replace flask-jwt-extended's default error responses 
+    # so every token probelm returns a JSON message 
 
     @jwt.unauthorized_loader # handles missing token 
     def missing_token_callback(reason):
@@ -36,7 +40,8 @@ def create_app():
                 "message": "Token has expired"}, 401
 
 
-    # register blueprints 
+    # register blueprints: url_prefix is added in front of every route in the blueprint 
+    # ie. "/login" becomes "/api/v1/auth/login"
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth") # mounts authorization routes 
     app.register_blueprint(ticket_bp, url_prefix="/api/v1/tickets") # mounts ticket routes 
 

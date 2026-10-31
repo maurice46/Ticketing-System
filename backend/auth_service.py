@@ -4,20 +4,22 @@ from models import db, User
 import re
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$") # makes sure its a valid email address
-MAX_EMAIL_LEN = 120
+MAX_EMAIL_LEN = 120 # matches the String(120) column in models.py
 MIN_PASSWORD_LEN = 8
 
-def _read_credentials(data):
-    # return (email, password, error) | error tuple = (message, status code) or None
+def _read_credentials(data): # return (email, password, error) | error = (message, status code) or None
+
+    # body must be a JSON object (dict) containing both keys 
     if not isinstance(data, dict) or "email" not in data or "password" not in data:
         return None, None, ({"error": "email and password required"}, 400)
 
     email, password = data['email'], data['password']
 
+    # stops values like 123 or a list from crashing .strip() later 
     if not isinstance(email, str) or not isinstance(password, str):
         return None, None, ({"error": "email and password must be strings"}, 400)
 
-    email = email.strip().lower() # normalize email
+    email = email.strip().lower() # normalize email (A@x.com == a@x.com)
 
     if not email or not password:
         return None, None, ({"error": "email and password required"}, 400)
@@ -40,11 +42,12 @@ def register_user(data):
     if User.query.filter_by(email=email).first():
         return {"error": "email already registered"}, 409
 
+    # never store the plain password, only its hash
     user = User(email=email,password=generate_password_hash(password))
 
     # save user to the database
     db.session.add(user)
-    db.session.commit()
+    db.session.commit() # commit also gives user its id
 
     return {"message": "user created", "id": user.id, "email": user.email}, 201
 
