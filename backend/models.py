@@ -10,6 +10,7 @@ class User(db.Model):
     role = db.Column(db.String(20), default="user")
 
 
+
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)

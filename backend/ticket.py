@@ -25,6 +25,7 @@ def create():
     return create_ticket(data, creator_id)
 
 
+
 # GET /api/v1/tickets/all  -> your tickets (admin gets everyones)
 @ticket_bp.route("/all", methods=["GET"])
 @jwt_required()
@@ -33,12 +34,14 @@ def list_all():
     return list_tickets(user_id) # the service decides what this user may see 
 
 
+
 # GET /api/v1/tickets/5  -> one ticket; <int::ticket_id> turns the 5 into an integer argument 
 @ticket_bp.route("/<int:ticket_id>", methods=["GET"])
 @jwt_required()
 def get_one(ticket_id):
     user_id = int(get_jwt_identity())
     return get_ticket_by_id(ticket_id, user_id)
+
 
 
 # PATCH /api/v1/tickets/5  -> change only the fields you send (title, description, status)
@@ -51,6 +54,7 @@ def update(ticket_id):
     user_id = int(get_jwt_identity())
     data = request.get_json(silent=True)
     return update_ticket(ticket_id, data, user_id)
+
 
 
 # DELETE /api/v1/tickets/5  -> remove a ticket
