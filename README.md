@@ -41,19 +41,3 @@ A backend API I built with Python and Flask for managing support tickets. Users 
 | `ticket_service.py` | the rules behind tickets |
 | `test_api.py` | the automated tests |
 
-## Trying it yourself
-
-```powershell
-pip install -r requirements.txt
-$env:FLASK_DEBUG = "1"
-python main.py
-```
-
-The app now runs at `http://127.0.0.1:5000`. To run the tests, use `pytest -v`.
-
-## What's next
-
-- Show when each ticket was created and last changed
-- Split long ticket lists into pages
-- Filter tickets by status
-- A simple way to make someone an admin
